@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: gustavo.moraes
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  name: username
+                  type: varchar(32)
+                  constraints:
+                    primaryKey:  true
+                    nullable:  false
+              - column:
+                  name: password
+                  type: varchar(32)
+                  constraints:
+                    nullable: false
+            tableName: credentials
