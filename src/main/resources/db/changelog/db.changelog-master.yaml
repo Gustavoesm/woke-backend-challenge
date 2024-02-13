@@ -17,3 +17,43 @@ databaseChangeLog:
                   constraints:
                     nullable: false
             tableName: credentials
+  - changeSet:
+      id: 2
+      author: gustavo.moraes
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  name: username
+                  type: varchar(32)
+                  constraints:
+                    primaryKey: true
+                    foreignKeyName: fk_username
+                    references: credentials(username)
+                    nullable: false
+              - column:
+                  name: first_name
+                  type: varchar(32)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_name
+                  type: varchar(96)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: phone
+                  type: varchar(32)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: varchar(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: birth_date
+                  type: date
+                  constraints:
+                    nullable: false
+            tableName: user_info

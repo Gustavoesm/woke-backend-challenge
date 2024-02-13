@@ -23,9 +23,9 @@ class CredentialController {
     lateinit var service: CredentialService
 
     @PostMapping("/login")
-    fun attemptLogin(@RequestBody payload: CredentialPayload): ResponseEntity<Any> {
+    fun attemptLogin(@RequestBody request: CredentialPayload): ResponseEntity<Any> {
         try {
-            service.attemptLogin(asCredential(payload))
+            service.attemptLogin(asCredential(request))
         } catch (err: IllegalArgumentException) {
             return generateResponse("Login failed.", HttpStatus.UNAUTHORIZED, {})
         }
