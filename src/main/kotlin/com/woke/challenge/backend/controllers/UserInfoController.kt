@@ -1,8 +1,10 @@
-package com.woke.challenge.backend.infra
+package com.woke.challenge.backend.controllers
 
 import com.woke.challenge.backend.infra.ResponseHandler.generateResponse
+import com.woke.challenge.backend.infra.UserInfoDTO
 import com.woke.challenge.backend.model.*
-import com.woke.challenge.backend.service.UserInfoService
+import com.woke.challenge.backend.model.exceptions.UserNotFoundException
+import com.woke.challenge.backend.services.UserInfoService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -18,9 +20,12 @@ class UserInfoController {
     lateinit var service: UserInfoService
 
     @PostMapping("/info")
-    fun create(@PathVariable username: String, @RequestBody request: UserInfoPayload): ResponseEntity<Any> {
-        service.createIfNotExists(asUsername(username), asUserInfo(request))
-        return generateResponse("Data set for user.", HttpStatus.CREATED, {})
+    fun create(@PathVariable username: String, @RequestBody request: UserInfoDTO): ResponseEntity<Any> {
+        return if (service.createIfNotExists(asUsername(username), asUserInfo(request))) {
+            generateResponse("Data set for user.", HttpStatus.CREATED, {})
+        } else {
+            generateResponse("User already has data set.", HttpStatus.BAD_REQUEST, {})
+        }
     }
 
     @GetMapping("/info")
@@ -33,8 +38,8 @@ class UserInfoController {
         }
     }
 
-    private fun payloadFrom(user: UserInfo): UserInfoPayload {
-        return UserInfoPayload(
+    private fun payloadFrom(user: UserInfo): UserInfoDTO {
+        return UserInfoDTO(
             user.firstName.value,
             user.lastName.value,
             user.phone.value,
@@ -47,7 +52,7 @@ class UserInfoController {
         return Username(username)
     }
 
-    private fun asUserInfo(payload: UserInfoPayload): UserInfo {
+    private fun asUserInfo(payload: UserInfoDTO): UserInfo {
         return UserInfo(
             FirstName(payload.firstName),
             LastName(payload.lastName),

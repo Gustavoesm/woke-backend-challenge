@@ -1,12 +1,14 @@
 package com.woke.challenge.backend.model
 
-class Password(val value: String) {
+class Password(val value: String, encoded: Boolean = false) {
     init {
-        require(value.length >= 8) { ERR_LEN }
-        require(value.none { it.isWhitespace() }) { ERR_WHITESPACE }
-        require(value.any { it.isDigit() }) { ERR_DIGIT }
-        require(value.any { it.isUpperCase() }) { ERR_UPPER }
-        require(value.any { !it.isLetterOrDigit() }) { ERR_SPECIAL }
+        if(!encoded){
+            require(value.length >= 8) { ERR_LEN }
+            require(value.none { it.isWhitespace() }) { ERR_WHITESPACE }
+            require(value.any { it.isDigit() }) { ERR_DIGIT }
+            require(value.any { it.isUpperCase() }) { ERR_UPPER }
+            require(value.any { !it.isLetterOrDigit() }) { ERR_SPECIAL }
+        }
     }
 
     companion object{

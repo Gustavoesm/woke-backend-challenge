@@ -1,0 +1,6 @@
+package com.woke.challenge.backend.infra
+
+data class CredentialDTO(
+    val username: String,
+    val password: String
+)

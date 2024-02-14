@@ -1,7 +1,7 @@
 package com.woke.challenge.backend.infra
 
 import com.woke.challenge.backend.model.Credential
-import com.woke.challenge.backend.model.CredentialRepository
+import com.woke.challenge.backend.model.repositories.CredentialRepository
 import com.woke.challenge.backend.model.Password
 import com.woke.challenge.backend.model.Username
 import org.springframework.jdbc.core.RowMapper
@@ -13,13 +13,12 @@ import java.sql.ResultSet
 @Repository
 class JDBCCredentialRepository(private val jdbcTemplate: NamedParameterJdbcTemplate): CredentialRepository {
 
-    override fun save(credential: Credential): Boolean {
-        return jdbcTemplate.update(INSERT_CREDENTIAL, params(credential)) > 0
+    override fun exists(username: Username): Boolean {
+        return jdbcTemplate.queryForObject(SELECT_COUNT_USERNAME, params(username.value), Int::class.java) == 1
     }
 
-    override fun exists(credential: Credential): Boolean {
-        val rowCount = jdbcTemplate.queryForObject(SELECT_COUNT_CREDENTIAL, params(credential), Int::class.java)
-        return rowCount == 1
+    override fun save(credential: Credential): Boolean {
+        return jdbcTemplate.update(INSERT_CREDENTIAL, params(credential)) > 0
     }
 
     override fun devIndex(): List<Credential> {
@@ -27,11 +26,19 @@ class JDBCCredentialRepository(private val jdbcTemplate: NamedParameterJdbcTempl
         return index
     }
 
+    override fun findByUsername(username: String): Credential {
+        return jdbcTemplate.query(SELECT_USERNAME, params(username), rowMapper)[0]
+    }
+
     private fun params(credential: Credential): MapSqlParameterSource {
         val paramSource = MapSqlParameterSource()
         paramSource.addValue("username", credential.username.value)
         paramSource.addValue("password", credential.password.value)
         return paramSource
+    }
+
+    private fun params(username: String): MapSqlParameterSource {
+        return MapSqlParameterSource("username", username)
     }
 
     class CredentialsMapper: RowMapper<Credential> {
@@ -46,6 +53,8 @@ class JDBCCredentialRepository(private val jdbcTemplate: NamedParameterJdbcTempl
         const val INSERT_CREDENTIAL = "INSERT INTO credentials (username, password) VALUES (:username, :password);"
         const val SELECT_COUNT_CREDENTIAL = "SELECT COUNT(*) FROM credentials " +
                 "WHERE username = :username AND password = :password;"
+        const val SELECT_USERNAME = "SELECT * FROM credentials WHERE username = :username;"
+        const val SELECT_COUNT_USERNAME = "SELECT COUNT(*) FROM credentials WHERE username = :username;"
         const val SELECT_ALL = "SELECT * FROM credentials;"
     }
 }

@@ -1,6 +1,7 @@
 package com.woke.challenge.backend.infra
 
 import com.woke.challenge.backend.model.*
+import com.woke.challenge.backend.model.repositories.UserInfoRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
@@ -12,7 +13,8 @@ import java.sql.ResultSet
 class JDBCUserInfoRepository : UserInfoRepository {
 
     override fun exists(username: Username): Boolean {
-        return jdbcTemplate.queryForObject(SELECT_COUNT, params(username), Int::class.java) == 1
+        val count = jdbcTemplate.queryForObject(SELECT_COUNT, params(username), Int::class.java)
+        return count == 1
     }
 
     override fun get(username: Username): UserInfo {
@@ -37,7 +39,7 @@ class JDBCUserInfoRepository : UserInfoRepository {
         return MapSqlParameterSource("username", username.value)
     }
 
-    class UserInfoMapper: RowMapper<UserInfo> {
+    class UserInfoMapper : RowMapper<UserInfo> {
         override fun mapRow(rs: ResultSet, rowNum: Int): UserInfo {
             return UserInfo(
                 FirstName(rs.getString("first_name")),

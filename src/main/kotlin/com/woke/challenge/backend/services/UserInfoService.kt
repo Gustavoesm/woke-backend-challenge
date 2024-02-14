@@ -1,8 +1,8 @@
-package com.woke.challenge.backend.service
+package com.woke.challenge.backend.services
 
 import com.woke.challenge.backend.model.UserInfo
-import com.woke.challenge.backend.model.UserInfoRepository
-import com.woke.challenge.backend.model.UserNotFoundException
+import com.woke.challenge.backend.model.repositories.UserInfoRepository
+import com.woke.challenge.backend.model.exceptions.UserNotFoundException
 import com.woke.challenge.backend.model.Username
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
