@@ -1,9 +1,9 @@
 package com.woke.challenge.backend.infra
 
 import com.woke.challenge.backend.model.Credential
-import com.woke.challenge.backend.model.repositories.CredentialRepository
 import com.woke.challenge.backend.model.Password
 import com.woke.challenge.backend.model.Username
+import com.woke.challenge.backend.model.repositories.CredentialRepository
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository
 import java.sql.ResultSet
 
 @Repository
-class JDBCCredentialRepository(private val jdbcTemplate: NamedParameterJdbcTemplate): CredentialRepository {
+class JDBCCredentialRepository(private val jdbcTemplate: NamedParameterJdbcTemplate) : CredentialRepository {
 
     override fun exists(username: Username): Boolean {
         return jdbcTemplate.queryForObject(SELECT_COUNT_USERNAME, params(username.value), Int::class.java) == 1
@@ -41,7 +41,7 @@ class JDBCCredentialRepository(private val jdbcTemplate: NamedParameterJdbcTempl
         return MapSqlParameterSource("username", username)
     }
 
-    class CredentialsMapper: RowMapper<Credential> {
+    class CredentialsMapper : RowMapper<Credential> {
         override fun mapRow(rs: ResultSet, rowNum: Int): Credential {
             return Credential(Username(rs.getString("username")), Password(rs.getString("password")))
         }
@@ -51,8 +51,6 @@ class JDBCCredentialRepository(private val jdbcTemplate: NamedParameterJdbcTempl
 
     companion object {
         const val INSERT_CREDENTIAL = "INSERT INTO credentials (username, password) VALUES (:username, :password);"
-        const val SELECT_COUNT_CREDENTIAL = "SELECT COUNT(*) FROM credentials " +
-                "WHERE username = :username AND password = :password;"
         const val SELECT_USERNAME = "SELECT * FROM credentials WHERE username = :username;"
         const val SELECT_COUNT_USERNAME = "SELECT COUNT(*) FROM credentials WHERE username = :username;"
         const val SELECT_ALL = "SELECT * FROM credentials;"
