@@ -1,4 +1,4 @@
-package com.woke.challenge.backend.infra
+package com.woke.challenge.backend.infra.jdbc
 
 import com.woke.challenge.backend.model.*
 import com.woke.challenge.backend.model.repositories.UserInfoRepository

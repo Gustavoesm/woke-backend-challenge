@@ -1,7 +1,7 @@
 package com.woke.challenge.backend.controllers
 
+import com.woke.challenge.backend.infra.DTO.UserInfoDTO
 import com.woke.challenge.backend.infra.ResponseHandler.generateResponse
-import com.woke.challenge.backend.infra.UserInfoDTO
 import com.woke.challenge.backend.model.*
 import com.woke.challenge.backend.model.exceptions.UserNotFoundException
 import com.woke.challenge.backend.services.UserInfoService

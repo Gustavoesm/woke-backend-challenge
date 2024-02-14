@@ -1,8 +1,8 @@
 package com.woke.challenge.backend.controllers
 
-import com.woke.challenge.backend.infra.AuthTokenDTO
-import com.woke.challenge.backend.infra.CredentialDTO
-import com.woke.challenge.backend.infra.IndexResponseDTO
+import com.woke.challenge.backend.infra.DTO.AuthTokenDTO
+import com.woke.challenge.backend.infra.DTO.CredentialDTO
+import com.woke.challenge.backend.infra.DTO.IndexResponseDTO
 import com.woke.challenge.backend.infra.ResponseHandler.generateResponse
 import com.woke.challenge.backend.model.Credential
 import com.woke.challenge.backend.model.Password
@@ -15,12 +15,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.web.bind.annotation.CrossOrigin
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @CrossOrigin(origins = ["http://localhost:3000"])
@@ -53,7 +48,7 @@ class AuthController {
     @PostMapping("/create")
     fun createUser(@RequestBody payload: CredentialDTO): ResponseEntity<Any> {
         return try {
-            if(authService.attemptCreate(asCredential(payload))) {
+            if (authService.attemptCreate(asCredential(payload))) {
                 generateResponse("Account created.", HttpStatus.CREATED, {})
             } else {
                 generateResponse("Username already exists.", HttpStatus.BAD_REQUEST, {})
@@ -68,12 +63,13 @@ class AuthController {
         return generateResponse("[DEV] Listing all users:", HttpStatus.OK, format(authService.getIndex()))
     }
 
-    private fun asCredential(payload: CredentialDTO): Credential{
+    private fun asCredential(payload: CredentialDTO): Credential {
         return Credential(Username(payload.username), Password(encoder.encode(payload.password), true))
     }
 
     private fun format(index: List<Credential>): Any {
-        val indexPayload = index.map { credential -> CredentialDTO(credential.username.value, credential.password.value) }
+        val indexPayload =
+            index.map { credential -> CredentialDTO(credential.username.value, credential.password.value) }
         return IndexResponseDTO(indexPayload)
     }
 }
